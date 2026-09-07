@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram Userbot MTProto | Automação e Agendador de Mensagens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header-title">Telegram AutoPost MTProto</h1>
+          <p class="header-subtitle">Userbot com API não oficial • Login por QR Code • Agendamento Inteligente</p>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div id="bot-status-badge" class="status-pill status-disconnected">
+          <span class="status-dot"></span>
+          <span id="bot-status-text">Desconectado</span>
+        </div>
+
+        <div id="user-profile-pill" class="user-pill hidden">
+          <div class="user-avatar" id="header-user-avatar">U</div>
+          <div class="user-info-text">
+            <span class="user-name" id="header-user-name">Usuário</span>
+            <span class="user-username" id="header-user-username">@username</span>
+          </div>
+          <button id="btn-logout" class="btn-icon" title="Desconectar da conta">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid Layout -->
+    <main class="main-grid">
+      <!-- Coluna 1: Autenticação & Conta -->
+      <section class="card auth-card">
+        <div class="card-header">
+          <div class="card-header-title">
+            <span class="step-num">1</span>
+            <h2>Login Não Oficial (QR Code)</h2>
+          </div>
+          <span class="badge-unofficial">MTProto Client</span>
+        </div>
+
+        <div id="credentials-form" class="form-section">
+          <p class="auth-desc">
+            Conecte sua conta do Telegram diretamente escaneando o QR Code pelo aplicativo no celular. <strong>Sem necessidade de cadastro de desenvolvedor.</strong>
+          </p>
+
+          <button id="btn-generate-qr" class="btn btn-primary btn-block btn-lg">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Gerar QR Code para Conectar
+          </button>
+
+          <!-- Toggle Opcional para API ID/Hash customizado -->
+          <div class="advanced-toggle-wrapper">
+            <button id="btn-toggle-advanced" class="btn-link-subtle" type="button">
+              ⚙️ Usar API ID / API HASH próprio (Opcional)
+            </button>
+          </div>
+
+          <div id="advanced-credentials-box" class="advanced-box hidden">
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="input-api-id">API ID (Opcional)</label>
+                <input type="text" id="input-api-id" placeholder="Padrão do Cliente" autocomplete="off">
+              </div>
+              <div class="form-group flex-2">
+                <label for="input-api-hash">API HASH (Opcional)</label>
+                <input type="password" id="input-api-hash" placeholder="Padrão do Cliente" autocomplete="off">
+              </div>
+            </div>
+            <button id="btn-toggle-guide" class="btn-link" type="button">
+              Como obter API ID & Hash no my.telegram.org
+            </button>
+            <div id="api-keys-guide" class="guide-box hidden" style="margin-top: 10px;">
+              <ol>
+                <li>Acesse: <a href="https://my.telegram.org" target="_blank" rel="noopener">my.telegram.org</a>.</li>
+                <li>Entre com seu número e código do Telegram.</li>
+                <li>Vá em <strong>API development tools</strong> e crie uma aplicação.</li>
+                <li>Copie o <strong>api_id</strong> e <strong>api_hash</strong>.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Área de Exibição do QR Code -->
+        <div id="qr-container" class="qr-container hidden">
+          <div class="qr-box">
+            <div class="qr-corner top-left"></div>
+            <div class="qr-corner top-right"></div>
+            <div class="qr-corner bottom-left"></div>
+            <div class="qr-corner bottom-right"></div>
+            
+            <div id="qr-loading-spinner" class="qr-spinner hidden">
+              <div class="spinner"></div>
+              <p>Gerando token seguro...</p>
+            </div>
+
+            <img id="qr-image" src="" alt="QR Code Telegram" class="qr-image hidden">
+          </div>
+
+          <div class="qr-instructions">
+            <div class="instruction-step">
+              <span class="step-badge">1</span>
+              <span>Abra o <strong>Telegram</strong> no seu celular</span>
+            </div>
+            <div class="instruction-step">
+              <span class="step-badge">2</span>
+              <span>Acesse <strong>Configurações > Dispositivos</strong></span>
+            </div>
+            <div class="instruction-step">
+              <span class="step-badge">3</span>
+              <span>Toque em <strong>Conectar Dispositivo</strong> e aponte para o QR Code</span>
+            </div>
+          </div>
+
+          <div class="qr-status-bar">
+            <span id="qr-status-label">Aguardando leitura do QR Code...</span>
+            <div class="qr-timer-bar">
+              <div id="qr-timer-progress" class="qr-timer-fill"></div>
+            </div>
+          </div>
+
+          <div class="qr-links">
+            <a id="qr-direct-link" href="#" target="_blank" class="btn-link">Abrir diretamente no Telegram</a>
+          </div>
+        </div>
+
+        <!-- Modal/Form de 2FA Password -->
+        <div id="password-form" class="form-section hidden password-box">
+          <div class="password-notice">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <div>
+              <h4>Verificação em Duas Etapas (2FA) Ativa</h4>
+              <p id="password-hint-text">Esta conta exige uma senha adicional configurada no Telegram.</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <input type="password" id="input-2fa-password" placeholder="Digite sua senha de 2FA">
+          </div>
+          <button id="btn-submit-password" class="btn btn-primary btn-block">Confirmar Senha</button>
+        </div>
+
+        <!-- Card de Usuário Autenticado -->
+        <div id="user-connected-card" class="authenticated-card hidden">
+          <div class="auth-success-badge">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Sessão MTProto Ativa & Conectada
+          </div>
+
+          <div class="auth-profile-details">
+            <div class="avatar-large" id="profile-avatar">U</div>
+            <div class="profile-meta">
+              <h3 id="profile-name">Nome do Usuário</h3>
+              <p id="profile-username">@username</p>
+              <p id="profile-phone" class="text-muted">+55 11 99999-9999</p>
+            </div>
+          </div>
+
+          <p class="session-info-tip">
+            Sua chave de sessão está salva localmente. As próximas reinicializações não exigirão novo escaneamento.
+          </p>
+
+          <button id="btn-logout-alt" class="btn btn-outline-danger btn-block">
+            Desconectar Esta Conta
+          </button>
+        </div>
+      </section>
+
+      <!-- Coluna 2: Configuração de Postagem e Agendador -->
+      <section class="card scheduler-card">
+        <div class="card-header">
+          <div class="card-header-title">
+            <span class="step-num">2</span>
+            <h2>Configuração de Postagem</h2>
+          </div>
+          <div class="header-tools">
+            <button id="btn-refresh-dialogs" class="btn-icon-label" title="Recarregar lista de grupos">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 4v6h-6"></path>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+              Atualizar Grupos
+            </button>
+          </div>
+        </div>
+
+        <!-- Seletor de Grupo -->
+        <div class="form-group">
+          <label for="select-group">
+            Grupo ou Canal de Destino <span class="required">*</span>
+          </label>
+          <div class="group-select-wrapper">
+            <select id="select-group" class="form-select" disabled>
+              <option value="">Conecte sua conta para carregar seus grupos...</option>
+            </select>
+          </div>
+          <small class="form-hint" id="group-details-hint">
+            Selecione o grupo onde você deseja que o bot poste automaticamente.
+          </small>
+        </div>
+
+        <!-- Upload de Foto -->
+        <div class="form-group photo-upload-group">
+          <label>Foto do Post (Opcional)</label>
+          
+          <div id="photo-drop-zone" class="photo-drop-zone">
+            <input type="file" id="input-photo-file" accept="image/*" class="file-input-hidden">
+            
+            <div id="drop-zone-empty" class="drop-zone-content">
+              <div class="upload-icon-circle">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+              </div>
+              <div class="drop-zone-texts">
+                <span class="drop-zone-title">Clique ou arraste uma foto aqui</span>
+                <span class="drop-zone-sub">PNG, JPG, WEBP ou GIF (até 25MB)</span>
+              </div>
+            </div>
+
+            <!-- Card de foto carregada -->
+            <div id="drop-zone-filled" class="drop-zone-filled hidden">
+              <img id="photo-thumb-preview" src="" alt="Miniatura da foto" class="photo-thumb">
+              <div class="photo-file-meta">
+                <span id="photo-file-name" class="photo-name">imagem.jpg</span>
+                <span id="photo-file-size" class="photo-size">0 KB</span>
+              </div>
+              <button type="button" id="btn-remove-photo" class="btn-remove-photo" title="Remover esta foto">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Remover
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compositor de Legenda / Mensagem -->
+        <div class="form-group">
+          <div class="label-with-actions">
+            <label for="textarea-message">
+              Frase de Legenda da Foto <span class="required">*</span>
+            </label>
+            <span class="char-counter" id="message-char-counter">0 caracteres</span>
+          </div>
+
+          <textarea id="textarea-message" rows="4" placeholder="Digite aqui a frase/legenda que acompanhará a foto no Telegram..."></textarea>
+
+          <!-- Tags rápidas anti-spam -->
+          <div class="tag-helper-bar">
+            <span class="tag-label">Tags dinâmicas anti-spam:</span>
+            <button type="button" class="btn-tag" data-tag="{hora}" title="Insere a hora atual (ex: 14:32:10)">+ {hora}</button>
+            <button type="button" class="btn-tag" data-tag="{data}" title="Insere a data atual (ex: 07/09/2026)">+ {data}</button>
+            <button type="button" class="btn-tag" data-tag="{aleatorio}" title="Insere código aleatório (ex: A9K2F)">+ {aleatorio}</button>
+            <button type="button" class="btn-tag" data-tag="{Olá|Oi|E aí!}" title="Spintax: sorteia uma das palavras aleatoriamente">+ {Spintax}</button>
+          </div>
+        </div>
+
+        <!-- Live Preview Accordion -->
+        <div class="preview-box">
+          <div class="preview-header">
+            <span>Prévia do Post no Telegram:</span>
+            <button id="btn-reroll-preview" class="btn-link-small" type="button">Simular Variação 🎲</button>
+          </div>
+          <div class="telegram-post-preview">
+            <div id="preview-photo-container" class="preview-photo-container hidden">
+              <img id="preview-photo-img" src="" alt="Foto" class="preview-photo-img">
+            </div>
+            <div id="preview-content" class="preview-content">
+              Digite uma frase para visualizar a prévia da legenda...
+            </div>
+          </div>
+        </div>
+
+        <!-- Configuração de Intervalo -->
+        <div class="form-row interval-config-row">
+          <div class="form-group flex-2">
+            <label for="input-interval-value">Intervalo de Postagem <span class="required">*</span></label>
+            <div class="input-with-unit">
+              <input type="number" id="input-interval-value" min="5" value="10">
+              <select id="select-interval-unit">
+                <option value="seconds">Segundos</option>
+                <option value="minutes" selected>Minutos</option>
+                <option value="hours">Horas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="input-jitter">Variação Aleatória</label>
+            <div class="input-unit-fixed">
+              <input type="number" id="input-jitter" min="0" max="60" value="5">
+              <span class="unit-fixed">± seg</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="checkbox-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="check-send-immediately" checked>
+            <span>Enviar primeira mensagem imediatamente ao iniciar</span>
+          </label>
+        </div>
+
+        <!-- Ações do Agendador -->
+        <div class="scheduler-actions">
+          <button id="btn-start-scheduler" class="btn btn-success btn-lg">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Iniciar Postagens
+          </button>
+
+          <button id="btn-pause-scheduler" class="btn btn-warning btn-lg hidden">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            Pausar
+          </button>
+
+          <button id="btn-stop-scheduler" class="btn btn-danger btn-lg hidden">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12"></rect>
+            </svg>
+            Parar
+          </button>
+
+          <button id="btn-test-send" class="btn btn-outline-primary">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            Enviar Teste Agora
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Seção Inferior: Monitoramento ao Vivo & Terminal de Logs -->
+    <section class="card monitoring-card">
+      <div class="monitoring-header">
+        <div class="card-header-title">
+          <span class="step-num">3</span>
+          <h2>Monitoramento e Métricas em Tempo Real</h2>
+        </div>
+        <div class="header-tools">
+          <button id="btn-clear-logs" class="btn-icon-label" title="Limpar terminal">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Limpar Logs
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Dashboard Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Status do Agendador</div>
+          <div class="kpi-value" id="kpi-bot-status">Inativo</div>
+          <div class="kpi-subtext" id="kpi-target-group">Nenhum grupo ativo</div>
+        </div>
+
+        <div class="kpi-card kpi-highlight">
+          <div class="kpi-label">Próximo Disparo Em</div>
+          <div class="kpi-value countdown-value" id="kpi-countdown">--:--</div>
+          <div class="kpi-subtext" id="kpi-countdown-sub">Aguardando início</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">Enviadas com Sucesso</div>
+          <div class="kpi-value text-success" id="kpi-total-sent">0</div>
+          <div class="kpi-subtext" id="kpi-last-sent-time">Nenhum disparo ainda</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">Erros / Falhas</div>
+          <div class="kpi-value text-danger" id="kpi-total-errors">0</div>
+          <div class="kpi-subtext" id="kpi-last-error-text">Nenhuma falha</div>
+        </div>
+      </div>
+
+      <!-- Terminal de Logs -->
+      <div class="terminal-container">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+          <div class="terminal-title">telegram-userbot.log (Live MTProto Stream)</div>
+          <div class="terminal-tools">
+            <label class="autoscroll-toggle">
+              <input type="checkbox" id="check-autoscroll" checked>
+              <span>Auto-scroll</span>
+            </label>
+          </div>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+          <div class="log-entry log-info">
+            <span class="log-time">[00:00:00]</span>
+            <span class="log-tag tag-info">INFO</span>
+            <span class="log-msg">Sistema inicializado. Conecte sua conta do Telegram para começar.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Telegram Userbot MTProto • Desenvolvido com GramJS e Node.js • Utilize de acordo com os Termos de Serviço do Telegram.</p>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

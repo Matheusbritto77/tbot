@@ -1,0 +1,12 @@
+services:
+  tbot:
+    build: .
+    container_name: telegram-userbot
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+    environment:
+      - PORT=3000
