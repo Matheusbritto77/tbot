@@ -9,7 +9,7 @@ const schedulerService = require('./lib/scheduler');
 const { loadConfig, saveConfig, getLogs, clearLogs, addLog } = require('./lib/store');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4578;
 
 // Setup uploads folder
 const UPLOADS_DIR = path.join(__dirname, 'uploads');

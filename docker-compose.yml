@@ -4,9 +4,9 @@ services:
     container_name: telegram-userbot
     restart: unless-stopped
     ports:
-      - "${PORT:-3000}:3000"
+      - "${PORT:-4578}:4578"
     volumes:
       - ./data:/app/data
       - ./uploads:/app/uploads
     environment:
-      - PORT=3000
+      - PORT=4578
