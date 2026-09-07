@@ -11,7 +11,7 @@ Aplicação web completa para automação de postagens no Telegram utilizando um
 ```bash
 docker compose up -d
 ```
-Abra no navegador: 👉 **[http://localhost:4578](http://localhost:4578)**
+Abra no navegador: 👉 **[http://localhost](http://localhost)** (porta 80)
 
 ---
 
@@ -28,7 +28,7 @@ Abra no navegador: 👉 **[http://localhost:4578](http://localhost:4578)**
    ```
 
 3. Abra no navegador:
-   👉 **[http://localhost:4578](http://localhost:4578)**
+   👉 **[http://localhost](http://localhost)** (porta 80)
 
 ---
 
@@ -49,7 +49,7 @@ Para utilizar a API não oficial do Telegram (MTProto), o Telegram exige que voc
 
 ## 📱 Como Conectar via QR Code
 
-1. Na aplicação em [http://localhost:4578](http://localhost:4578), insira seu `API ID` e `API HASH` e clique em **Gerar QR Code para Login**.
+1. Na aplicação em [http://localhost](http://localhost), insira seu `API ID` e `API HASH` e clique em **Gerar QR Code para Login**.
 2. Abra o aplicativo oficial do **Telegram no seu smartphone**.
 3. Vá em **Configurações** (ou Menu lateral) > **Dispositivos** > **Conectar Dispositivo**.
 4. Aponte a câmera do celular para o QR Code na tela do computador.

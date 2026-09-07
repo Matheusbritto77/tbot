@@ -10,7 +10,7 @@ RUN npm install --omit=dev
 COPY . .
 
 # Expose web port
-EXPOSE 4578
+EXPOSE 80
 
 # Persistent volumes for session and uploads
 VOLUME ["/app/data", "/app/uploads"]
